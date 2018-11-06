@@ -26,7 +26,7 @@ public:
     BST() :  m_Size(0) {}
     TItem *   Insert( TItem * item, int number );
     TItem *   Min( TItem * item );
-    //TItem * Delete( TItem * item, int number );
+    TItem *   Delete( TItem * item, int number );
     //void PrintParent( TItem * item, int number );
     //void PrintSuccessor( TItem * item, int number );
     //void Rotate( TItem * item, int number, int rotate );
@@ -57,6 +57,34 @@ TItem *BST::Min(TItem *item) {
     if ( item ->m_Left == nullptr )
         return item;
     Min(item ->m_Left);
+}
+
+TItem *BST::Delete(TItem *item, int number) {
+
+    if ( item == nullptr )
+        return nullptr;
+
+    if ( number < ( item ->m_Number ) )
+        item->m_Left = Delete(item->m_Left, number);
+
+    if ( number > ( item ->m_Number ) )
+        item->m_Right = Delete(item->m_Right, number);
+
+    if ( number == ( item ->m_Number ) ){
+        if ( item->m_Right == nullptr && item->m_Left == nullptr )
+            return nullptr;
+        else if ( item->m_Left == nullptr )
+            return item->m_Right;
+        else if ( item->m_Right == nullptr )
+            return item->m_Left;
+        else {
+            TItem * nearItem = Min( item -> m_Right );
+            item ->m_Number = nearItem ->m_Number;
+            item ->m_Right = Delete(item ->m_Right, nearItem ->m_Number);
+        }
+    }
+
+    return item;
 }
 
 int main(){
