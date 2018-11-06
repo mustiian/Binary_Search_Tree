@@ -27,7 +27,7 @@ public:
     TItem *   Insert( TItem * item, int number );
     TItem *   Min( TItem * item );
     TItem *   Delete( TItem * item, int number );
-    //void PrintParent( TItem * item, int number );
+    TItem *   PrintParent( TItem * item, int number );
     //void PrintSuccessor( TItem * item, int number );
     //void Rotate( TItem * item, int number, int rotate );
     //void printTree( TItem * item );
@@ -87,8 +87,37 @@ TItem *BST::Delete(TItem *item, int number) {
     return item;
 }
 
+TItem * BST::PrintParent(TItem *item, int number) {
+
+    if ( item == nullptr ){
+        cout << "notfound" << endl;
+        return nullptr;
+    }
+
+    if ( number == ( item ->m_Number ) ){
+        cout <<"noparent" << endl;
+        return nullptr;
+    }
+
+    if ( item ->m_Right != nullptr )
+        if ( number == ( item ->m_Right ->m_Number ) ){
+            return item;
+        }
+
+    if ( item ->m_Left != nullptr )
+        if ( number == ( item ->m_Left ->m_Number ) ){
+            return item;
+        }
+
+    if ( number < ( item ->m_Number ) )
+        return PrintParent(item->m_Left, number);
+
+    if ( number > ( item ->m_Number ) )
+        return PrintParent(item->m_Right, number);
+}
+
 int main(){
-    TItem * tree = nullptr;
+    TItem * tree = nullptr, * tmp = nullptr;
     BST alg;
 
     tree = alg.Insert(tree, 30);
@@ -96,4 +125,23 @@ int main(){
     tree = alg.Insert(tree, 20);
     tree = alg.Insert(tree, 25);
 
+    tmp = alg.PrintParent(tree, 10);
+    if ( tmp != nullptr )
+        cout << tmp ->m_Number << endl;
+
+    tmp = alg.PrintParent(tree, 20);
+    if ( tmp != nullptr )
+        cout << tmp ->m_Number << endl;
+
+    tmp = alg.PrintParent(tree, 30);
+    if ( tmp != nullptr )
+        cout << tmp ->m_Number << endl;
+
+    tmp = alg.PrintParent(tree, 25);
+    if ( tmp != nullptr )
+        cout << tmp ->m_Number << endl;
+
+    tmp = alg.PrintParent(tree, 1000);
+    if ( tmp != nullptr )
+        cout << tmp ->m_Number << endl;
 }
