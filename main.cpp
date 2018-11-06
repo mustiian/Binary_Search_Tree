@@ -7,12 +7,10 @@ struct TItem;
 struct TItem{
     TItem ( int number ) : m_Number(number) ,
                            m_Left(nullptr),
-                           m_Right(nullptr),
-                           m_Parent(nullptr) {}
+                           m_Right(nullptr) {}
     int     m_Number;
     TItem * m_Left;
     TItem * m_Right;
-    TItem * m_Parent;
 
     friend ostream& operator <<( ostream &os, const TItem * rhs){
         if ( rhs == nullptr )
@@ -25,51 +23,41 @@ struct TItem{
 
 class BST{
 public:
-    BST() : m_Head(nullptr), m_Size(0) {}
-    ~BST();
-    void Insert( int number );
-    void Delete( int number );
-    void PrintParent( int number );
-    void PrintSuccessor( int number );
-    void Rotate( int number, int rotate );
-    void printTree();
+    BST() :  m_Size(0) {}
+    TItem *   Insert( TItem * item, int number );
+    //TItem * Delete( TItem * item, int number );
+    //void PrintParent( TItem * item, int number );
+    //void PrintSuccessor( TItem * item, int number );
+    //void Rotate( TItem * item, int number, int rotate );
+    //void printTree( TItem * item );
+    //void DeleteTree( TItem * item );
 private:
-    TItem * m_Head;
     int m_Size;
 };
 
-BST::~BST() {
+TItem * BST::Insert(TItem * item, int number) {
 
+    if ( item == NULL ){
+        TItem * nextItem = new TItem(number);
+        return nextItem;
+    }
+
+    if ( number < ( item ->m_Number ) )
+        item->m_Left = Insert(item->m_Left, number);
+
+    if ( number > ( item ->m_Number ) )
+        item->m_Right = Insert(item->m_Right, number);
+
+    return item;
 }
-
-void BST::Insert(int number) {
-
-
-}
-
-void BST::Delete(int number) {
-
-}
-
-void BST::PrintParent(int number) {
-
-}
-
-void BST::PrintSuccessor(int number) {
-
-}
-
-void BST::Rotate(int number, int rotate) {
-
-}
-
-void BST::printTree() {
-
-}
-
 
 int main(){
+    TItem * tree = NULL;
+    BST alg;
 
-
+    tree = alg.Insert(tree, 30);
+    tree = alg.Insert(tree, 10);
+    tree = alg.Insert(tree, 20);
+    tree = alg.Insert(tree, 25);
 
 }
