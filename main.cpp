@@ -25,6 +25,7 @@ class BST{
 public:
     BST() :  m_Size(0) {}
     TItem *   Insert( TItem * item, int number );
+    TItem *   Min( TItem * item );
     //TItem * Delete( TItem * item, int number );
     //void PrintParent( TItem * item, int number );
     //void PrintSuccessor( TItem * item, int number );
@@ -37,8 +38,8 @@ private:
 
 TItem * BST::Insert(TItem * item, int number) {
 
-    if ( item == NULL ){
-        TItem * nextItem = new TItem(number);
+    if ( item == nullptr ){
+        auto nextItem = new TItem(number);
         return nextItem;
     }
 
@@ -51,8 +52,15 @@ TItem * BST::Insert(TItem * item, int number) {
     return item;
 }
 
+TItem *BST::Min(TItem *item) {
+
+    if ( item ->m_Left == nullptr )
+        return item;
+    Min(item ->m_Left);
+}
+
 int main(){
-    TItem * tree = NULL;
+    TItem * tree = nullptr;
     BST alg;
 
     tree = alg.Insert(tree, 30);
