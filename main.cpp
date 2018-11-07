@@ -17,6 +17,11 @@ public:
     virtual const char* what() const throw() { return "nosuccessor"; }
 };
 
+class NoRotate : public  exception{
+public:
+    virtual const char* what() const throw() { return "norotate"; }
+};
+
 struct TItem;
 
 struct TItem{
@@ -39,117 +44,116 @@ struct TItem{
 class BST{
 public:
     BST() :  m_Size(0) {}
-    TItem *   Insert( TItem * item, int number );
-    TItem *   Min( TItem * item );
-    TItem *   Max(TItem *item);
-    TItem *   Delete( TItem * item, int number );
-    TItem *   GetParent( TItem * item, int number );
-    TItem *   GetSuccessor( TItem * item, int number );
-    TItem *   FindItem( TItem * item, int number );
-    //void Rotate( TItem * item, int number, int rotate );
-    //void printTree( TItem * item );
+    TItem *   Insert( TItem * tree, int number );
+    TItem *   Min( TItem * tree );
+    TItem *   Max(TItem *tree);
+    TItem *   Delete( TItem * tree, int number );
+    TItem *   GetParent( TItem * tree, int number );
+    TItem *   GetSuccessor( TItem * tree, int number );
+    TItem *   FindItem( TItem * tree, int number );
+    TItem *   Rotate( TItem * tree, int number, int rotate );
     //void DeleteTree( TItem * item );
 private:
     int m_Size;
 };
 
-TItem * BST::Insert(TItem * item, int number) {
+TItem * BST::Insert(TItem * tree, int number) {
 
-    if ( item == nullptr ){
+    if ( tree == nullptr ){
         auto nextItem = new TItem(number);
         return nextItem;
     }
 
-    if ( number < ( item ->m_Number ) )
-        item->m_Left = Insert(item->m_Left, number);
+    if ( number < ( tree ->m_Number ) )
+        tree->m_Left = Insert(tree->m_Left, number);
 
-    if ( number > ( item ->m_Number ) )
-        item->m_Right = Insert(item->m_Right, number);
+    if ( number > ( tree ->m_Number ) )
+        tree->m_Right = Insert(tree->m_Right, number);
 
-    return item;
+    return tree;
 }
 
-TItem *BST::Max(TItem *item) {
+TItem *BST::Max(TItem *tree) {
 
-    if ( item ->m_Right == nullptr )
-        return item;
-    Max(item ->m_Right);
+    if ( tree ->m_Right == nullptr )
+        return tree;
+    Max(tree ->m_Right);
 }
 
-TItem *BST::Min(TItem *item) {
+TItem *BST::Min(TItem *tree) {
 
-    if ( item ->m_Left == nullptr )
-        return item;
-    Min(item ->m_Left);
+    if ( tree ->m_Left == nullptr )
+        return tree;
+    Min(tree ->m_Left);
 }
 
-TItem *BST::Delete(TItem *item, int number) {
+TItem *BST::Delete(TItem *tree, int number) {
 
-    if ( item == nullptr )
+    if ( tree == nullptr )
         return nullptr;
 
-    if ( number < ( item ->m_Number ) )
-        item->m_Left = Delete(item->m_Left, number);
+    if ( number < ( tree ->m_Number ) )
+        tree->m_Left = Delete(tree->m_Left, number);
 
-    if ( number > ( item ->m_Number ) )
-        item->m_Right = Delete(item->m_Right, number);
+    if ( number > ( tree ->m_Number ) )
+        tree->m_Right = Delete(tree->m_Right, number);
 
-    if ( number == ( item ->m_Number ) ){
-        if ( item->m_Right == nullptr && item->m_Left == nullptr )
+    if ( number == ( tree ->m_Number ) ){
+        if ( tree->m_Right == nullptr && tree->m_Left == nullptr )
             return nullptr;
-        else if ( item->m_Left == nullptr )
-            return item->m_Right;
-        else if ( item->m_Right == nullptr )
-            return item->m_Left;
+        else if ( tree->m_Left == nullptr )
+            return tree->m_Right;
+        else if ( tree->m_Right == nullptr )
+            return tree->m_Left;
         else {
-            TItem * nearItem = Min( item -> m_Right );
-            item ->m_Number = nearItem ->m_Number;
-            item ->m_Right = Delete(item ->m_Right, nearItem ->m_Number);
+            TItem * nearItem = Min( tree -> m_Right );
+            tree ->m_Number = nearItem ->m_Number;
+            tree ->m_Right = Delete(tree ->m_Right, nearItem ->m_Number);
         }
     }
 
-    return item;
+    return tree;
 }
 
-TItem * BST::GetParent(TItem *item, int number) {
+TItem * BST::GetParent(TItem *tree, int number) {
 
-    if ( item == nullptr ){
+    if ( tree == nullptr ){
         throw NotFound();
     }
 
-    if ( number == ( item ->m_Number ) ){
+    if ( number == ( tree ->m_Number ) ){
         throw NoParent();
     }
 
-    if ( item ->m_Right != nullptr )
-        if ( number == ( item ->m_Right ->m_Number ) ){
-            return item;
+    if ( tree ->m_Right != nullptr )
+        if ( number == ( tree ->m_Right ->m_Number ) ){
+            return tree;
         }
 
-    if ( item ->m_Left != nullptr )
-        if ( number == ( item ->m_Left ->m_Number ) ){
-            return item;
+    if ( tree ->m_Left != nullptr )
+        if ( number == ( tree ->m_Left ->m_Number ) ){
+            return tree;
         }
 
-    if ( number < ( item ->m_Number ) )
-        return GetParent(item->m_Left, number);
+    if ( number < ( tree ->m_Number ) )
+        return GetParent(tree->m_Left, number);
 
-    if ( number > ( item ->m_Number ) )
-        return GetParent(item->m_Right, number);
+    if ( number > ( tree ->m_Number ) )
+        return GetParent(tree->m_Right, number);
 
 }
 
-TItem *BST::FindItem(TItem *item, int number) {
+TItem *BST::FindItem(TItem *tree, int number) {
 
-    if ( item == nullptr )
+    if ( tree == nullptr )
         return nullptr;
 
-    if ( number == item ->m_Number )
-        return item;
-    if ( number < item ->m_Number )
-        return FindItem( item ->m_Left, number );
-    if (number > item -> m_Number )
-        return  FindItem( item ->m_Right, number );
+    if ( number == tree ->m_Number )
+        return tree;
+    if ( number < tree ->m_Number )
+        return FindItem( tree ->m_Left, number );
+    if (number > tree -> m_Number )
+        return  FindItem( tree ->m_Right, number );
 }
 
 TItem *BST::GetSuccessor(TItem *tree, int number) {
@@ -181,24 +185,93 @@ TItem *BST::GetSuccessor(TItem *tree, int number) {
     return parent;
 }
 
+TItem *BST::Rotate(TItem *tree, int number, int rotate) {
+    TItem *pointX = tree;
+    TItem * pointY;
+    TItem * parent;
+
+    if (pointX == nullptr)
+        return nullptr;
+
+    while ( number != pointX->m_Number ) {
+        if (number < pointX->m_Left->m_Number) {
+            pointX = pointX ->m_Left;
+        }
+
+        if (number > pointX ->m_Right->m_Number){
+            pointX = pointX ->m_Right;
+        }
+    }
+
+    if ( rotate == 1 ){
+        if ( pointX ->m_Right == nullptr )
+            throw NoRotate();
+        pointY = pointX -> m_Right;
+
+        pointX -> m_Right = pointY ->m_Left;
+        pointY ->m_Left = pointX;
+    }
+
+    if ( rotate == 2 ){
+        if ( pointX ->m_Left == nullptr )
+            throw NoRotate();
+        pointY = pointX -> m_Left;
+
+        pointX -> m_Left = pointY ->m_Right;
+        pointY ->m_Right = pointX;
+    }
+    try {
+       parent = GetParent(tree, number);
+    } catch ( const exception& e ){
+        tree = pointY;
+        return tree;
+    }
+
+
+    if ( parent ->m_Right == pointX )
+        parent ->m_Right = pointY;
+
+    if ( parent ->m_Left == pointX )
+        parent ->m_Left = pointY;
+
+    return tree;
+}
+
 int main(){
     TItem * tree = nullptr, * item = nullptr;
     BST alg;
 
-    tree = alg.Insert(tree, 2);
+    tree = alg.Insert(tree, 3);
     tree = alg.Insert(tree, 1);
     tree = alg.Insert(tree, 4);
-    tree = alg.Insert(tree, 3);
-    tree = alg.Insert(tree, 5);
+    tree = alg.Insert(tree, 2);
 
     item = alg.GetParent(tree, 1);
     if ( item != nullptr )cout << item ->m_Number << endl;
 
+    item = alg.GetParent(tree, 2);
+    if ( item != nullptr )cout << item ->m_Number << endl;
+
     try{
-        item = alg.GetParent(tree, 2);
+        item = alg.GetParent(tree, 3);
     } catch ( const exception & e ){
         cout << e.what() << endl;
     }
+    if ( item != nullptr )cout << item ->m_Number << endl;
+
+    item = alg.GetParent(tree, 4);
+    if ( item != nullptr )cout << item ->m_Number << endl;
+
+    tree = alg.Rotate(tree, 3, 2);
+
+    try{
+        item = alg.GetParent(tree, 1);
+    } catch ( const exception & e ){
+        cout << e.what() << endl;
+    }
+    if ( item != nullptr )cout << item ->m_Number << endl;
+
+    item = alg.GetParent(tree, 2);
     if ( item != nullptr )cout << item ->m_Number << endl;
 
     item = alg.GetParent(tree, 3);
@@ -207,25 +280,10 @@ int main(){
     item = alg.GetParent(tree, 4);
     if ( item != nullptr )cout << item ->m_Number << endl;
 
-    item = alg.GetParent(tree, 5);
-    if ( item != nullptr )cout << item ->m_Number << endl;
-
-    item = alg.GetSuccessor(tree, 1);
-    if ( item != nullptr )cout << item ->m_Number << endl;
-
-    item = alg.GetSuccessor(tree, 2);
-    if ( item != nullptr )cout << item ->m_Number << endl;
-
-    item = alg.GetSuccessor(tree, 3);
-    if ( item != nullptr )cout << item ->m_Number << endl;
-
-    item = alg.GetSuccessor(tree, 4);
-    if ( item != nullptr )cout << item ->m_Number << endl;
 
     try{
-        item = alg.GetSuccessor(tree, 5);
-    } catch ( const exception& e ){
+        item = alg.Rotate(tree, 1, 2);
+    } catch ( const exception & e ){
         cout << e.what() << endl;
     }
-    if ( item != nullptr )cout << item ->m_Number << endl;
 }
