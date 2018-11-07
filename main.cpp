@@ -2,6 +2,21 @@
 
 using namespace std;
 
+class NotFound : public  exception{
+public:
+    virtual const char* what() const throw() { return "notfound"; }
+};
+
+class NoParent : public  exception{
+public:
+    virtual const char* what() const throw() { return "noparent"; }
+};
+
+class NoSuccessor : public  exception{
+public:
+    virtual const char* what() const throw() { return "nosuccessor"; }
+};
+
 struct TItem;
 
 struct TItem{
@@ -16,7 +31,7 @@ struct TItem{
         if ( rhs == nullptr )
             return os;
         os << rhs->m_Number << " Left: "   << rhs->m_Left-> m_Number
-                           << " Right: "  << rhs->m_Right-> m_Number << endl;
+           << " Right: "  << rhs->m_Right-> m_Number << endl;
         return os;
     }
 };
@@ -99,13 +114,11 @@ TItem *BST::Delete(TItem *item, int number) {
 TItem * BST::GetParent(TItem *item, int number) {
 
     if ( item == nullptr ){
-        cout << "notfound" << endl;
-        return nullptr;
+        throw NotFound();
     }
 
     if ( number == ( item ->m_Number ) ){
-        cout <<"noparent" << endl;
-        return nullptr;
+        throw NoParent();
     }
 
     if ( item ->m_Right != nullptr )
@@ -139,48 +152,80 @@ TItem *BST::FindItem(TItem *item, int number) {
         return  FindItem( item ->m_Right, number );
 }
 
-TItem *BST::GetSuccessor(TItem *item, int number) {
-    TItem * localTop = FindItem(item, number);
+TItem *BST::GetSuccessor(TItem *tree, int number) {
+    TItem * localTop = nullptr;
+    TItem * parent = nullptr;
 
-    if ( localTop == nullptr )
-        return nullptr;
+    localTop =  FindItem(tree, number);
+    if ( localTop == nullptr ){
+        throw NotFound();
+    }
 
-    return nullptr;
+    if ( localTop ->m_Right != nullptr)
+        return Min( localTop ->m_Right );
+    try{
+        parent = GetParent(tree, localTop ->m_Number);
+    } catch ( const exception& e) { }
+
+    while ( parent != nullptr && localTop == parent ->m_Right ){
+        localTop = parent;
+        try{
+            parent = GetParent(tree, parent ->m_Number);
+        } catch ( const exception& e) { parent = nullptr; }
+    }
+
+    if ( parent == nullptr ){
+        throw  NoSuccessor();
+    }
+
+    return parent;
 }
 
 int main(){
     TItem * tree = nullptr, * item = nullptr;
     BST alg;
 
-    tree = alg.Insert(tree, 30);
-    tree = alg.Insert(tree, 10);
-    tree = alg.Insert(tree, 20);
-    tree = alg.Insert(tree, 25);
-    tree = alg.Insert(tree, 50);
-    tree = alg.Insert(tree, 14);
-    tree = alg.Insert(tree, 12);
+    tree = alg.Insert(tree, 2);
+    tree = alg.Insert(tree, 1);
+    tree = alg.Insert(tree, 4);
+    tree = alg.Insert(tree, 3);
+    tree = alg.Insert(tree, 5);
 
-    item = alg.GetParent(tree, 10);
+    item = alg.GetParent(tree, 1);
     if ( item != nullptr )cout << item ->m_Number << endl;
 
-    item = alg.GetParent(tree, 20);
+    try{
+        item = alg.GetParent(tree, 2);
+    } catch ( const exception & e ){
+        cout << e.what() << endl;
+    }
     if ( item != nullptr )cout << item ->m_Number << endl;
 
-    item = alg.GetParent(tree, 30);
+    item = alg.GetParent(tree, 3);
     if ( item != nullptr )cout << item ->m_Number << endl;
 
-    item = alg.GetParent(tree, 25);
+    item = alg.GetParent(tree, 4);
     if ( item != nullptr )cout << item ->m_Number << endl;
 
-    item = alg.GetParent(tree, 1000);
+    item = alg.GetParent(tree, 5);
     if ( item != nullptr )cout << item ->m_Number << endl;
 
-    item = alg.GetParent(tree, 50);
+    item = alg.GetSuccessor(tree, 1);
     if ( item != nullptr )cout << item ->m_Number << endl;
 
-    item = alg.GetParent(tree, 14);
+    item = alg.GetSuccessor(tree, 2);
     if ( item != nullptr )cout << item ->m_Number << endl;
 
-    item = alg.GetParent(tree, 12);
+    item = alg.GetSuccessor(tree, 3);
+    if ( item != nullptr )cout << item ->m_Number << endl;
+
+    item = alg.GetSuccessor(tree, 4);
+    if ( item != nullptr )cout << item ->m_Number << endl;
+
+    try{
+        item = alg.GetSuccessor(tree, 5);
+    } catch ( const exception& e ){
+        cout << e.what() << endl;
+    }
     if ( item != nullptr )cout << item ->m_Number << endl;
 }
