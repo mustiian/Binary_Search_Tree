@@ -178,7 +178,7 @@ TItem *BST::GetSuccessor(TItem *tree, int number) {
         localTop = parent;
         try{
             parent = GetParent(tree, parent ->m_Number);
-        } catch ( const exception& e) { parent = nullptr; }
+        } catch ( const exception& e ) { parent = nullptr; }
     }
 
     if ( parent == nullptr ){
@@ -194,24 +194,11 @@ TItem * BST::Rotate(TItem *tree, int number, int rotate) {
     TItem * parent;
 
     if (pointX == nullptr)
-        return nullptr;
+        throw NotFound();
 
-    while ( number != pointX->m_Number ) {
-        if ( pointX->m_Left == nullptr &&
-             pointX->m_Right == nullptr ) throw NotFound();
-
-        if ( pointX->m_Left != nullptr){
-            if (number < pointX->m_Number) {
-                pointX = pointX ->m_Left;
-            }
-        }
-
-        if ( pointX->m_Right != nullptr){
-            if (number > pointX ->m_Number){
-                pointX = pointX ->m_Right;
-            }
-        }
-    }
+    pointX = FindItem(tree, number);
+    if (pointX == nullptr)
+        throw NotFound();
 
     if ( rotate == 1 ){
         if ( pointX ->m_Right == nullptr )
@@ -301,7 +288,7 @@ int main(){
                 break;
             default: break;
         }
-        //cout << "All good" << endl;
+
     }
 
     alg.DeleteTree(tree);
