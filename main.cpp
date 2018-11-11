@@ -165,13 +165,13 @@ TItem *BST::GetSuccessor(TItem *tree, int number) {
     if ( localTop ->m_Right != nullptr)
         return Min( localTop ->m_Right );
     try{
-        parent = GetParent(tree, localTop ->m_Number);
+        parent =localTop ->m_Parent;
     } catch ( const exception& e) { }
 
     while ( parent != nullptr && localTop == parent ->m_Right ){
         localTop = parent;
         try{
-            parent = GetParent(tree, parent ->m_Number);
+            parent = parent ->m_Parent;
         } catch ( const exception& e ) { parent = nullptr; }
     }
 
@@ -200,29 +200,36 @@ TItem * BST::Rotate(TItem *tree, int number, int rotate) {
         pointY = pointX -> m_Right;
 
         pointX -> m_Right = pointY ->m_Left;
+        pointX -> m_Right ->m_Parent = pointX;
         pointY ->m_Left = pointX;
-    }
-
-    if ( rotate == 2 ){
+    } else {
         if ( pointX ->m_Left == nullptr )
             throw NoRotate();
         pointY = pointX -> m_Left;
 
         pointX -> m_Left = pointY ->m_Right;
+        pointX -> m_Left ->m_Parent = pointX;
         pointY ->m_Right = pointX;
     }
-    try {
-       parent = GetParent(tree, number);
-    } catch ( const exception& e ){
+
+    parent = pointX ->m_Parent;
+
+    if ( parent == nullptr ){
         tree = pointY;
+        pointY ->m_Parent = nullptr;
+        pointX ->m_Parent = pointY;
         return tree;
     }
 
-    if ( parent ->m_Right == pointX )
+    if ( parent ->m_Right == pointX ){
         parent ->m_Right = pointY;
+        pointY ->m_Parent = parent;
+    }
 
-    if ( parent ->m_Left == pointX )
+    if ( parent ->m_Left == pointX ){
         parent ->m_Left = pointY;
+        pointY ->m_Parent = parent;
+    }
 
     return tree;
 }
