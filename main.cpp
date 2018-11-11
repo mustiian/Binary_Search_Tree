@@ -120,6 +120,8 @@ TItem *BST::Delete(TItem *tree, int number) {
 
 TItem * BST::GetParent(TItem *tree, int number) {
 
+    TItem * item = nullptr;
+
     if ( tree == nullptr ){
         throw NotFound();
     }
@@ -128,23 +130,12 @@ TItem * BST::GetParent(TItem *tree, int number) {
         throw NoParent();
     }
 
-    if ( tree ->m_Right != nullptr )
-        if ( number == ( tree ->m_Right ->m_Number ) ){
-            return tree;
-        }
+    item = FindItem(tree, number);
 
-    if ( tree ->m_Left != nullptr )
-        if ( number == ( tree ->m_Left ->m_Number ) ){
-            return tree;
-        }
+    if (item == nullptr)
+        throw NotFound();
 
-    if ( number < ( tree ->m_Number ) )
-        return GetParent(tree->m_Left, number);
-
-    if ( number > ( tree ->m_Number ) )
-        return GetParent(tree->m_Right, number);
-
-    return nullptr;
+    return item->m_Parent;
 }
 
 TItem *BST::FindItem(TItem *tree, int number) {
