@@ -27,10 +27,12 @@ struct TItem;
 struct TItem{
     TItem ( int number ) : m_Number(number) ,
                            m_Left(nullptr),
-                           m_Right(nullptr) {}
+                           m_Right(nullptr),
+                           m_Parent(nullptr) {}
     int     m_Number;
     TItem * m_Left;
     TItem * m_Right;
+    TItem * m_Parent;
 
     friend ostream& operator <<( ostream &os, const TItem * rhs){
         if ( rhs == nullptr )
@@ -44,7 +46,7 @@ struct TItem{
 class BST{
 public:
     BST() :  m_Size(0) {}
-    TItem *   Insert( TItem * tree, int number );
+    TItem *   Insert( TItem * tree, int number, TItem * parent );
     TItem *   Min( TItem * tree );
     TItem *   Max(TItem *tree);
     TItem *   Delete( TItem * tree, int number );
@@ -57,18 +59,19 @@ private:
     int m_Size;
 };
 
-TItem * BST::Insert(TItem * tree, int number) {
+TItem * BST::Insert(TItem * tree, int number, TItem * parent) {
 
     if ( tree == nullptr ){
         auto nextItem = new TItem(number);
+        nextItem ->m_Parent = parent;
         return nextItem;
     }
 
     if ( number < ( tree ->m_Number ) )
-        tree->m_Left = Insert(tree->m_Left, number);
+        tree->m_Left = Insert(tree->m_Left, number, tree);
 
     if ( number > ( tree ->m_Number ) )
-        tree->m_Right = Insert(tree->m_Right, number);
+        tree->m_Right = Insert(tree->m_Right, number, tree);
 
     return tree;
 }
@@ -255,7 +258,7 @@ int main(){
 
         switch (command){
             case 1 :
-                tree = alg.Insert(tree, number);
+                tree = alg.Insert(tree, number, nullptr);
                 break;
             case 2 :
                 tree = alg.Delete(tree, number);
