@@ -48,7 +48,6 @@ public:
     BST() :  m_Size(0) {}
     TItem *   Insert( TItem * tree, int number, TItem * parent );
     TItem *   Min( TItem * tree );
-    TItem *   Max(TItem *tree);
     TItem *   Delete( TItem * tree, int number );
     TItem *   GetParent( TItem * tree, int number );
     TItem *   GetSuccessor( TItem * tree, int number );
@@ -64,23 +63,20 @@ TItem * BST::Insert(TItem * tree, int number, TItem * parent) {
     if ( tree == nullptr ){
         auto nextItem = new TItem(number);
         nextItem ->m_Parent = parent;
+
         return nextItem;
     }
 
-    if ( number < ( tree ->m_Number ) )
+    if ( number < ( tree ->m_Number ) ){
         tree->m_Left = Insert(tree->m_Left, number, tree);
+    }
 
-    if ( number > ( tree ->m_Number ) )
+    if ( number > ( tree ->m_Number ) ){
         tree->m_Right = Insert(tree->m_Right, number, tree);
 
+    }
+
     return tree;
-}
-
-TItem *BST::Max(TItem *tree) {
-
-    if ( tree ->m_Right == nullptr )
-        return tree;
-    return Max(tree ->m_Right);
 }
 
 TItem *BST::Min(TItem *tree) {
@@ -95,11 +91,17 @@ TItem *BST::Delete(TItem *tree, int number) {
     if ( tree == nullptr )
         return nullptr;
 
-    if ( number < ( tree ->m_Number ) )
+    if ( number < ( tree ->m_Number ) ){
         tree->m_Left = Delete(tree->m_Left, number);
+        if ( tree->m_Left != nullptr )
+            tree->m_Left->m_Parent = tree;
+    }
 
-    if ( number > ( tree ->m_Number ) )
+    if ( number > ( tree ->m_Number ) ){
         tree->m_Right = Delete(tree->m_Right, number);
+        if ( tree->m_Right != nullptr )
+            tree->m_Right->m_Parent = tree;
+    }
 
     if ( number == ( tree ->m_Number ) ){
         if ( tree->m_Right == nullptr && tree->m_Left == nullptr )
@@ -112,6 +114,8 @@ TItem *BST::Delete(TItem *tree, int number) {
             TItem * nearItem = Min( tree -> m_Right );
             tree ->m_Number = nearItem ->m_Number;
             tree ->m_Right = Delete(tree ->m_Right, nearItem ->m_Number);
+            if ( tree ->m_Right != nullptr )
+                tree ->m_Right ->m_Parent = tree;
         }
     }
 
@@ -164,15 +168,11 @@ TItem *BST::GetSuccessor(TItem *tree, int number) {
 
     if ( localTop ->m_Right != nullptr)
         return Min( localTop ->m_Right );
-    try{
-        parent =localTop ->m_Parent;
-    } catch ( const exception& e) { }
+    parent =localTop ->m_Parent;
 
     while ( parent != nullptr && localTop == parent ->m_Right ){
         localTop = parent;
-        try{
-            parent = parent ->m_Parent;
-        } catch ( const exception& e ) { parent = nullptr; }
+        parent = parent ->m_Parent;
     }
 
     if ( parent == nullptr ){
@@ -200,7 +200,8 @@ TItem * BST::Rotate(TItem *tree, int number, int rotate) {
         pointY = pointX -> m_Right;
 
         pointX -> m_Right = pointY ->m_Left;
-        pointX -> m_Right ->m_Parent = pointX;
+        if ( pointX -> m_Right != nullptr )
+            pointX -> m_Right ->m_Parent = pointX;
         pointY ->m_Left = pointX;
     } else {
         if ( pointX ->m_Left == nullptr )
@@ -208,11 +209,13 @@ TItem * BST::Rotate(TItem *tree, int number, int rotate) {
         pointY = pointX -> m_Left;
 
         pointX -> m_Left = pointY ->m_Right;
-        pointX -> m_Left ->m_Parent = pointX;
+        if ( pointX -> m_Left != nullptr )
+            pointX -> m_Left ->m_Parent = pointX;
         pointY ->m_Right = pointX;
     }
 
     parent = pointX ->m_Parent;
+    pointX ->m_Parent = pointY;
 
     if ( parent == nullptr ){
         tree = pointY;
